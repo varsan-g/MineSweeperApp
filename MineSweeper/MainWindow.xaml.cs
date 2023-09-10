@@ -9,24 +9,18 @@ namespace MineSweeper
 {
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel _viewModel;
-
         public MainWindow()
         {
             InitializeComponent();
+            MainWindowViewModel vm = new MainWindowViewModel();
+            DataContext = vm;
 
-            _viewModel = new MainWindowViewModel();
-            DataContext = _viewModel;
-
-            _viewModel.MineFieldLogic.PropertyChanged += MineFieldLogic_PropertyChanged;
+            var viewModel = DataContext as MainWindowViewModel;
+            viewModel.GameOverEvent += ViewModel_GameOverEvent;
         }
-
-        private void MineFieldLogic_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewModel_GameOverEvent(object sender, string e)
         {
-            if (e.PropertyName == nameof(MineFieldLogic.GameStatusMessage))
-            {
-                MessageBox.Show(_viewModel.MineFieldLogic.GameStatusMessage, "Game Status", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            MessageBox.Show(e, "Game Over", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void MineFieldButton_RightClick(object sender, MouseButtonEventArgs e)
@@ -35,7 +29,8 @@ namespace MineSweeper
                 return;
 
             var mineFieldElement = (MineFieldElement)button.DataContext;
-            _viewModel.MineFieldRightClickCommand.Execute(mineFieldElement);
+
+            ((MainWindowViewModel)DataContext).MineFieldRightClickCommand.Execute(mineFieldElement);
 
             e.Handled = true;
         }
