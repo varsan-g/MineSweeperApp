@@ -7,11 +7,15 @@ using System.Windows.Input;
 using MineSweeper.Model;
 using MineSweeper.Commands;
 using System.Linq;
+using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace MineSweeper.ViewModel
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        private Stopwatch stopwatch;
+        private DispatcherTimer timer;
         public ICommand MineFieldButtonClick { get; private set; }
         public ICommand MineFieldRightClickCommand { get; private set; }
 
@@ -33,6 +37,14 @@ namespace MineSweeper.ViewModel
             MineFieldButtonClick = new MineFieldButtonClickCommand(OnMineFieldButtonClick);
             MineFieldRightClickCommand = new MineFieldRightClickCommand(OnMineFieldRightClick);
             InitializeMineField();
+            stopwatch = new Stopwatch();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+
+            // Start the timer and the stopwatch
+            timer.Start();
+            stopwatch.Start();
         }
 
         public IEnumerable<MineFieldElement> MineFieldElements
@@ -150,6 +162,7 @@ namespace MineSweeper.ViewModel
             }
         }
 
+
         private void GameOver()
         {
             // Reveal all mines
@@ -160,6 +173,12 @@ namespace MineSweeper.ViewModel
                     mineFieldElement.IsRevealed = true;
                 }
             }
+            timer.Stop();
+            stopwatch.Stop();
+            TimeSpan score = stopwatch.Elapsed;
+
+            // Set the score
+            Score = score;
 
             // Update the game status message
             GameStatusMessage = "Game Over! You clicked on a mine.";
@@ -215,6 +234,14 @@ namespace MineSweeper.ViewModel
                 if (!element.IsMine && !element.IsRevealed)
                     return false;
             }
+
+            timer.Stop();
+            stopwatch.Stop();
+
+            TimeSpan score = stopwatch.Elapsed;
+
+            Score = score;
+
             GameStatusMessage = "Fedt! Du fandt alle minerne!";
             GameOverEvent?.Invoke(this, GameStatusMessage);
             return true;
@@ -256,6 +283,32 @@ namespace MineSweeper.ViewModel
                     OnPropertyChanged(nameof(GameStatusMessage));
                 }
             }
+        }
+
+        private TimeSpan _score;
+        public TimeSpan Score
+        {
+            get { return _score; }
+            set
+            {
+                if (_score != value)
+                {
+                    _score = value;
+                    OnPropertyChanged(nameof(Score));
+                }
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            // Get the elapsed time
+            TimeSpan elapsed = stopwatch.Elapsed;
+
+            // Create a new TimeSpan object with only seconds
+            TimeSpan score = new TimeSpan(elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
+
+            // Update the score with the new TimeSpan
+            Score = score;
         }
     }
 
