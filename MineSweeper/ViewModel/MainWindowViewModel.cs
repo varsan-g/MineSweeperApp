@@ -11,6 +11,14 @@ using System.Windows.Threading;
 
 namespace MineSweeper.ViewModel
 {
+    /* TODO:
+     * - Flyt MainWindow til View-folder
+     * - Split logic fra MainViewModel ind i "MineFieldLogic" og "GameLogic" i Model, da der ikke bliver fulgt SRP lige nu. MineFieldLogic skal indeholde metoderne til at initialisere MineField.
+     * - Tilføj 'Genstart' knap
+     * - Første MineField man klikker på skal være 'safe' - !isMine
+     * - Formatér score - indeholder ms i UI efter GameOver() bliver kaldet
+     * - Difficulty modes - easy 3 miner, medium 8 miner, hard 15 miner
+     */
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private Stopwatch stopwatch;
@@ -18,18 +26,12 @@ namespace MineSweeper.ViewModel
         public ICommand MineFieldButtonClick { get; private set; }
         public ICommand MineFieldRightClickCommand { get; private set; }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public delegate void GameOverEventHandler(object sender, string e);
         public event GameOverEventHandler GameOverEvent;
 
         public MineFieldElement[,] MineField { get; set; }
 
-        private const int TotalMines = 5;  // The total number of mines
+        private const int TotalMines = 5;  // Totale mængde af miner
 
         public MainWindowViewModel()
         {
@@ -283,6 +285,12 @@ namespace MineSweeper.ViewModel
             TimeSpan score = new TimeSpan(elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
 
             Score = score;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
