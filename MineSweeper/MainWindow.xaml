@@ -43,19 +43,18 @@
                     <StatusBar.Background>
                         <SolidColorBrush Color="{DynamicResource Primary500}"/>
                     </StatusBar.Background>
-                    <StatusBarItem Margin="10 0 10 0">
-                        <TextBlock Text="Mines remaining:" />
+                    <StatusBarItem Margin="10 5 0 5">
+                        <TextBlock Text="Miner tilbage" />
                     </StatusBarItem>
-                    <StatusBarItem Margin="10 0 10 0">
+                    <StatusBarItem Margin="0 5 190 5">
                         <TextBlock Text="{Binding MinesRemaining}" />
                     </StatusBarItem>
-                    <StatusBarItem Margin="10 0 10 0">
+                    <StatusBarItem Margin="10 5 0 5">
                         <StatusBarItem.Resources>
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Score}" Value="Game Over">
-                                        <Setter Property="Foreground" Value="Red" />
-                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Score}" 
+                                                 Value="Game Over"></DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StatusBarItem.Resources>
@@ -64,10 +63,13 @@
                 </StatusBar>
             </materialDesign:ColorZone>
 
-            <ItemsControl x:Name ="MineField" Grid.Row="1" ItemsSource="{Binding MineFieldElements}">
+            <ItemsControl x:Name ="MineField" 
+                          Grid.Row="1" 
+                          ItemsSource="{Binding MineFieldElements}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Rows="10" Columns="5"/>
+                        <UniformGrid Rows="10" 
+                                     Columns="5"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

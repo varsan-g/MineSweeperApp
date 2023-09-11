@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MineSweeper.Commands;
+using MineSweeper.Model;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using MineSweeper.Model;
-using MineSweeper.Commands;
-using System.Linq;
-using System.Diagnostics;
 using System.Windows.Threading;
 
 namespace MineSweeper.ViewModel
@@ -42,7 +41,6 @@ namespace MineSweeper.ViewModel
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;
 
-            // Start the timer and the stopwatch
             timer.Start();
             stopwatch.Start();
         }
@@ -78,11 +76,11 @@ namespace MineSweeper.ViewModel
                 int x, y;
                 do
                 {
-                    x = random.Next(0, MineField.GetLength(0)); // Get random x coordinate
-                    y = random.Next(0, MineField.GetLength(1)); // Get random y coordinate
-                } while (MineField[x, y].IsMine); // Keep getting new coordinates if the cell already contains a mine
+                    x = random.Next(0, MineField.GetLength(0)); 
+                    y = random.Next(0, MineField.GetLength(1)); 
+                } while (MineField[x, y].IsMine); 
 
-                MineField[x, y].IsMine = true; // Set the cell to be a mine
+                MineField[x, y].IsMine = true; 
             }
         }
 
@@ -95,32 +93,23 @@ namespace MineSweeper.ViewModel
 
             if (mineFieldElement.IsMine)
             {
-                // Reveal the mine
+                
                 mineFieldElement.IsRevealed = true;
 
-                // Handle game over
+                
                 GameOver();
             }
             else
             {
-                // Reveal the square
                 mineFieldElement.IsRevealed = true;
 
-                // Assuming you have a method to get the position of a MineFieldElement
                 (int x, int y) = GetPosition(mineFieldElement);
 
                 mineFieldElement.NeighboringMines = CalculateNeighboringMines(x, y);
 
-                // If there are no neighboring mines, reveal the neighbors recursively
                 if (mineFieldElement.NeighboringMines == 0)
                 {
                     RevealNeighbors(x, y);
-                }
-
-                // Check if all non-mine squares have been revealed
-                if (CheckForWin())
-                {
-                    // Handle game win
                 }
             }
         }
@@ -131,29 +120,24 @@ namespace MineSweeper.ViewModel
             {
                 for (int j = -1; j <= 1; j++)
                 {
-                    // Skip the square itself
                     if (i == 0 && j == 0)
                         continue;
 
                     int neighborX = x + i;
                     int neighborY = y + j;
 
-                    // Skip squares outside the minefield
                     if (neighborX < 0 || neighborY < 0 || neighborX >= MineField.GetLength(0) || neighborY >= MineField.GetLength(1))
                         continue;
 
                     var neighbor = MineField[neighborX, neighborY];
 
-                    // Skip if the neighbor is already revealed or flagged
                     if (neighbor.IsRevealed || neighbor.Flagged)
                         continue;
 
-                    // Reveal the neighbor
                     neighbor.IsRevealed = true;
 
                     neighbor.NeighboringMines = CalculateNeighboringMines(neighborX, neighborY);
 
-                    // If the neighbor has no neighboring mines, reveal its neighbors recursively
                     if (neighbor.NeighboringMines == 0)
                     {
                         RevealNeighbors(neighborX, neighborY);
@@ -165,7 +149,6 @@ namespace MineSweeper.ViewModel
 
         private void GameOver()
         {
-            // Reveal all mines
             foreach (var mineFieldElement in MineFieldElements)
             {
                 if (mineFieldElement.IsMine)
@@ -177,16 +160,12 @@ namespace MineSweeper.ViewModel
             stopwatch.Stop();
             TimeSpan score = stopwatch.Elapsed;
 
-            // Set the score
             Score = score;
 
-            // Update the game status message
-            GameStatusMessage = "Game Over! You clicked on a mine.";
+            GameStatusMessage = "Game Over! Du klikkede på en mine!";
 
-            // Raise the GameOverEvent
             GameOverEvent?.Invoke(this, GameStatusMessage);
 
-            // You could raise a PropertyChanged event for the MineField property to ensure the UI updates
             OnPropertyChanged(nameof(MineField));
         }
 
@@ -208,14 +187,12 @@ namespace MineSweeper.ViewModel
             {
                 for (int j = -1; j <= 1; j++)
                 {
-                    // Skip the square itself
                     if (i == 0 && j == 0)
                         continue;
 
                     int neighborX = x + i;
                     int neighborY = y + j;
 
-                    // Skip squares outside the minefield
                     if (neighborX < 0 || neighborY < 0 || neighborX >= MineField.GetLength(0) || neighborY >= MineField.GetLength(1))
                         continue;
 
@@ -259,7 +236,7 @@ namespace MineSweeper.ViewModel
                 }
             }
 
-            throw new Exception("MineFieldElement not found in MineField.");
+            throw new Exception("MineFieldElement kunne ikke findes.");
         }
 
         public int MinesRemaining
@@ -301,13 +278,10 @@ namespace MineSweeper.ViewModel
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            // Get the elapsed time
             TimeSpan elapsed = stopwatch.Elapsed;
 
-            // Create a new TimeSpan object with only seconds
             TimeSpan score = new TimeSpan(elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
 
-            // Update the score with the new TimeSpan
             Score = score;
         }
     }

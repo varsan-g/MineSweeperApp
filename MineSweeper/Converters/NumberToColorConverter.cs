@@ -25,12 +25,12 @@ namespace MineSweeper.Converters
                 }
             }
 
-            throw new ArgumentException("Expected value to be of type int");
+            throw new ArgumentException("Expected value is int");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException("NumberToColorConverter can only be used for one way conversion.");
+            throw new NotImplementedException();
         }
     }
 }
